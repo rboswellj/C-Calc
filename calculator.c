@@ -3,8 +3,9 @@ Robert Johnson
 CSE-130-50-4262
 1/26/2026
 Calculator
-A Calculator program that can perform addition, subtraction, multiplication and division, as well as modulus and prime tests.
-Only needs to be able to perform on 2 variables\
+A Calculator program that can perform addition, subtraction, multiplication and division, 
+as well as modulus and prime tests.
+Only needs to be able to perform on 2 variables.
 
 TODO:
 Figure out how to confirm input in an integer for modulus and prime test functions
@@ -170,7 +171,7 @@ void callOperation(int operation) {
             // Exit
             printf("\n");
             printf("====================================\n\n");
-            printf("You selected %s\n\n", operation);
+            printf("You selected Prime Test\n\n");
             printf("====================================\n\n");
             printf("Exiting calculator. Goodbye!\n");
             exit(0);
