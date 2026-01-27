@@ -16,18 +16,19 @@ Figure out how to confirm input in a double for other functions
 #include <stdlib.h>
 
 // Function prototypes
-int mainMenu();
-double collectFirstDouble();
-double collectSecondDouble();
-int testPrime(int n);
-void printHeader(char *operation);
-void printOutput(double result);
-void callOperation(int operation);
+int mainMenu(); // Function to display main menu and get user selection
+void callOperation(int operation); // Function to call the appropriate operation
+double collectFirstDouble(); // Function to collect first double input
+double collectSecondDouble(); // Function to collect second double input
+int testPrime(int n);  // Function to test if a number is prime
+void printHeader(char *operation); // Function to print operation header formatting
+void printOutput(double result); // Function to print output formatting
+
 
 int main()
 {
-    int notExit = 1;
-    char continueChoice;
+    int notExit = 1; // flag to control main loop
+    char continueChoice; // variable to store user choice to continue or exit
 
     do
     {
@@ -41,6 +42,8 @@ int main()
         // Ask user if they want to continue or exit
         printf("Would you like to perform another operation? (<y/n>): ");
         scanf(" %c", &continueChoice);
+
+        // Exit if the selection is n or N, or if the input is invalid
         if (continueChoice == 'n' || continueChoice == 'N')
         {
             notExit = 0;
@@ -52,6 +55,7 @@ int main()
             printf("Invalid choice. Exiting calculator. Goodbye!\n");
             break;
         }
+
         printf("\n");
         printf("====================================\n\n");
         printf("Returning to main menu...\n\n");
@@ -92,61 +96,6 @@ int mainMenu()
         }
     } while (!valid);
     return selection;
-}
-
-// Used to prompt for first double input on all operations except modulus and prime test
-double collectFirstDouble()
-{
-    double a;
-    printf("Enter first number: ");
-    scanf("%lf", &a);
-    return a;
-}
-
-// Used to prompt for second double input on all operations except modulus and prime test
-double collectSecondDouble()
-{
-    double b;
-    printf("Enter second number: ");
-    scanf("%lf", &b);
-    return b;
-}
-
-// Function to test if a number is prime
-int testPrime(int n)
-{
-    if (n <= 1)
-        return 0; // numbers less than or equal to 1 are not prime
-    if (n == 2)
-        return 1; // 2 is prime
-    if (n % 2 == 0)
-        return 0; // even numbers > 2 are not prime
-    for (int i = 3; i * i <= n; i += 2)
-    { // only check odd numbers. Check up to sqrt(n)
-        if (n % i == 0)
-            return 0; // found a divisor, not prime
-    }
-    return 1; // no divisors found, is prime
-}
-
-// Function to print operation header formatting
-void printHeader(char *operation)
-{
-    printf("\n");
-    printf("====================================\n\n");
-    printf("You selected %s\n\n", operation);
-    printf("====================================\n\n");
-    printf("Please enter your number(s)\n\n");
-}
-
-// Function to print output formatting
-void printOutput(double result)
-{
-    printf("\n");
-    printf("====================================\n\n");
-    printf("Result: %lf\n\n", result);
-    printf("====================================\n\n");
-    printf("\n");
 }
 
 // Function to call the appropriate operation based on user selection
@@ -254,3 +203,60 @@ void callOperation(int operation)
         break;
     }
 }
+
+// Used to prompt for first double input on all operations except modulus and prime test
+double collectFirstDouble()
+{
+    double a;
+    printf("Enter first number: ");
+    scanf("%lf", &a);
+    return a;
+}
+
+// Used to prompt for second double input on all operations except modulus and prime test
+double collectSecondDouble()
+{
+    double b;
+    printf("Enter second number: ");
+    scanf("%lf", &b);
+    return b;
+}
+
+// Function to test if a number is prime
+int testPrime(int n)
+{
+    if (n <= 1)
+        return 0; // numbers less than or equal to 1 are not prime
+    if (n == 2)
+        return 1; // 2 is prime
+    if (n % 2 == 0)
+        return 0; // even numbers > 2 are not prime
+    for (int i = 3; i * i <= n; i += 2)
+    { // only check odd numbers. Check up to sqrt(n)
+        if (n % i == 0)
+            return 0; // found a divisor, not prime
+    }
+    return 1; // no divisors found, is prime
+}
+
+// Function to print operation header formatting
+void printHeader(char *operation)
+{
+    printf("\n");
+    printf("====================================\n\n");
+    printf("You selected %s\n\n", operation);
+    printf("====================================\n\n");
+    printf("Please enter your number(s)\n\n");
+}
+
+// Function to print output formatting
+void printOutput(double result)
+{
+    printf("\n");
+    printf("====================================\n\n");
+    printf("Result: %lf\n\n", result);
+    printf("====================================\n\n");
+    printf("\n");
+}
+
+
