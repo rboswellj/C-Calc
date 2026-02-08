@@ -17,6 +17,7 @@ int mainMenu(); // Function to display main menu and get user selection
 void callOperation(int operation); // Function to call the appropriate operation
 int getIntInput(const char *prompt); // Function to get integer input, or modulus, prime test, exponent, and factorial. Validates input.
 double getDoubleInput(const char *prompt);// Used to prompt for double input on all operations that allow for decimal input. Validates input.
+char getCharInput(const char *prompt); // Function to get character input, used for continue choice. Validates input.
 void printHeader(char *operation); // Function to print operation header formatting
 void printOutputDouble(double result); // Function to print output formatting
 void printOutputInt(int result); // Function to print output formatting for integer results
@@ -48,8 +49,7 @@ int main()
         printf("\n");
 
         // Ask user if they want to continue or exit
-        printf("Would you like to perform another operation? (<y/n>): ");
-        scanf(" %c", &continueChoice);
+        continueChoice = getCharInput("Would you like to perform another operation? (<y/n>): ");
 
         // Exit if the selection is n or N, or if the input is invalid
         if (continueChoice == 'n' || continueChoice == 'N')
@@ -302,6 +302,17 @@ double getDoubleInput(const char *prompt)
 
         return value;
     }
+}
+
+// Function to get character input, used for continue choice. Validates input.
+char getCharInput(const char *prompt)
+{
+    char buffer[10];
+
+    printf("%s", prompt);
+    fgets(buffer, sizeof(buffer), stdin);
+
+    return buffer[0];
 }
 
 // Function to print operation header formatting
