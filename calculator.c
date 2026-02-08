@@ -10,7 +10,6 @@ Only needs to be able to perform on 2 variables.
 TODO:
 Figure out how to confirm input in an integer for modulus and prime test functions
 Figure out how to confirm input in a double for other functions
-Move all operations into their own function as per new guidelines
 Add factorial function
 Add integer power of integer function
 Add sequence function using an array before displaying. Thinking fibonacci sequence or 
@@ -23,8 +22,12 @@ int mainMenu(); // Function to display main menu and get user selection
 void callOperation(int operation); // Function to call the appropriate operation
 double collectFirstDouble(); // Function to collect first double input
 double collectSecondDouble(); // Function to collect second double input
+int collectFirstInt(); // Function to collect first integer input, for modulus, prime test, exponent, and factorial
+int collectSecondInt(); // Function to collect second integer input, for modulus, prime test, exponent, and factorial
 void printHeader(char *operation); // Function to print operation header formatting
-void printOutput(double result); // Function to print output formatting
+void printOutputDouble(double result); // Function to print output formatting
+void printOutputInt(int result); // Function to print output formatting for integer results
+void divisionByZeroError(); // Function to print division by zero error message
 
 // Function prototypes for operations
 double add(double a, double b); // Function to perform addition
@@ -33,6 +36,8 @@ double multiply(double a, double b); // Function to perform multiplication
 double divide(double a, double b); // Function to perform division
 int modulus(int a, int b); // Function to perform modulus operation
 int isPrime(int n); // Function to test if a number is prime
+unsigned long long factorial(int n); // Function to compute factorial of a number, using unsigned long long to allow for larger results since cannot be negative
+long long exponent(int base, int exp); // Function to compute base raised to the exp power, remains signed to allow for negatives
 
 int main()
 {
@@ -92,11 +97,14 @@ int mainMenu()
         printf("\t(4) Division\n");
         printf("\t(5) Modulus\n");
         printf("\t(6) Test if Prime\n");
-        printf("\t(7) Exit\n\n");
+        printf("\t(7) Factorial\n");
+        printf("\t(8) Exponentiation\n");
+        printf("\t(9) Operation\n\n");
+        printf("\t(0) Exit\n\n");
         printf("Please select an operation: ");
         scanf("%d", &selection);
         // if selection not in valid range print the error and then go back to the top
-        if (selection < 1 || selection > 7)
+        if (selection < 1 || selection > 9)
         {
             printf("\nInvalid selection. Please select a valid operation\n");
         }
@@ -121,21 +129,21 @@ void callOperation(int operation)
         printHeader("Addition");
         a = collectFirstDouble();
         b = collectSecondDouble();
-        printOutput(add(a,b));
+        printOutputDouble(add(a,b));
         break;
     case 2:
         // Subtraction
         printHeader("Subtraction");
         a = collectFirstDouble();
         b = collectSecondDouble();
-        printOutput(subtract(a,b));
+        printOutputDouble(subtract(a,b));
         break;
     case 3:
         // Multiplication
         printHeader("Multiplication");
         a = collectFirstDouble();
         b = collectSecondDouble();
-        printOutput(multiply(a,b));
+        printOutputDouble(multiply(a,b));
         break;
     case 4:
         // Division
@@ -144,40 +152,26 @@ void callOperation(int operation)
         b = collectSecondDouble();
         if (b == 0)
         {
-            printf("\n");
-            printf("====================================\n");
-            printf("Error: Division by zero is not allowed.\n");
-            printf("====================================\n");
-            printf("\n");
+            divisionByZeroError();
         }
         else
         {
-            printOutput(divide(a,b));
+            printOutputDouble(divide(a,b));
         }
         break;
     case 5:
         // Modulus
         printHeader("Modulus (Whole Numbers Only)");
-        printf("Enter first integer: ");
-        scanf("%d", &c);
-        printf("\nEnter second integer: ");
-        scanf("%d", &d);
+        c = collectFirstInt();
+        d = collectSecondInt();
         if (d == 0)
         {
-            printf("\n");
-            printf("====================================\n");
-            printf("Error: Division by zero is not allowed.\n");
-            printf("====================================\n");
-            printf("\n");
+            divisionByZeroError();
             break;
         }
         else
         {
-            printf("\n");
-            printf("====================================\n\n");
-            printf("Result: %d\n\n", modulus(c,d));
-            printf("====================================\n\n");
-            printf("\n");
+            printOutputInt(modulus(c,d));
         }
         break;
     case 6:
@@ -202,13 +196,41 @@ void callOperation(int operation)
         }
         break;
     case 7:
+        // Factorial
+        printHeader("Factorial (Whole Numbers Only)");
+        printf("Enter an integer for factorial computation: ");
+        scanf("%d", &c);
+        do {
+            if(c < 0){
+                printf("Error: Factorial is not defined for negative numbers. Please enter a non-negative integer: ");
+                scanf("%d", &c);
+            }
+        } while (c < 0);
+        printOutputInt(factorial(c));
+        break;
+    case 8:
+        // Exponentiation
+        printHeader("Exponentiation (Whole Numbers Only)");
+        c = collectFirstInt();
+        d = collectSecondInt();
+        do{
+            if(d < 0){
+                printf("Error: Exponentiation function only accepts non-negative integers for the exponent. Please enter a non-negative integer: ");
+                scanf("%d", &d);
+            }
+        } while (d < 0);
+        printOutputInt(exponent(c,d));
+        break;
+    case 9:
+        // Operation
+        printHeader("Operation");
+        printf("This operation is not yet implemented.\n");
+        break;
+    case 0:
         // Exit
-        printf("\n");
-        printf("====================================\n\n");
-        printf("You selected Exit\n\n");
-        printf("====================================\n\n");
         printf("Exiting calculator. Goodbye!\n");
         exit(0);
+        break;
     default:
         printf("Invalid operation selected.\n");
         break;
@@ -233,6 +255,23 @@ double collectSecondDouble()
     return b;
 }
 
+// Used to prompt for first integer input on modulus, prime test, exponent, and factorial operations
+int collectFirstInt()
+{
+    int c;
+    printf("Enter first integer: ");
+    scanf("%d", &c);
+    return c;
+}
+// Used to prompt for second integer input on modulus, prime test, exponent, and factorial operations
+int collectSecondInt()
+{
+    int d;
+    printf("Enter second integer: ");
+    scanf("%d", &d);
+    return d;
+}
+
 // Function to print operation header formatting
 void printHeader(char *operation)
 {
@@ -244,12 +283,30 @@ void printHeader(char *operation)
 }
 
 // Function to print output formatting
-void printOutput(double result)
+void printOutputDouble(double result)
 {
     printf("\n");
     printf("====================================\n\n");
     printf("Result: %lf\n\n", result);
     printf("====================================\n\n");
+    printf("\n");
+}
+// Function to print output formatting for integer results
+void printOutputInt(int result)
+{
+    printf("\n");
+    printf("====================================\n\n");
+    printf("Result: %d\n\n", result);
+    printf("====================================\n\n");
+    printf("\n");
+}
+
+void divisionByZeroError()
+{
+    printf("\n");
+    printf("====================================\n");
+    printf("Error: Division by zero is not allowed.\n");
+    printf("====================================\n");
     printf("\n");
 }
 
@@ -297,3 +354,31 @@ int isPrime(int n)
     }
     return 1; // no divisors found, is prime
 }
+
+// Function to compute factorial of a number
+unsigned long long factorial(int n){
+    // Must be positive integer
+    if(n < 0){
+        printf("Error: Factorial is not defined for negative numbers.\n");
+        return 0;
+    }
+    // Factorial of 0 is 1 so result starts from 1
+    unsigned long long result = 1;
+    // Multiply result by each integer up to n
+    for(int i = 1; i <= n; i++){
+        result *= i;
+    }
+    // return factorial result
+    return result;
+}
+
+long long exponent(int base, int exp){
+    // Initialize result to 1
+    int result = 1;
+    // Multiply result by base exp times
+    for(int i = 0; i < exp; i++){
+        result *= base;
+    }
+    return result;
+}
+
