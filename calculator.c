@@ -10,20 +10,29 @@ Only needs to be able to perform on 2 variables.
 TODO:
 Figure out how to confirm input in an integer for modulus and prime test functions
 Figure out how to confirm input in a double for other functions
+Move all operations into their own function as per new guidelines
+Add factorial function
+Add integer power of integer function
+Add sequence function using an array before displaying. Thinking fibonacci sequence or 
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 
-// Function prototypes
+// Function prototypes for UI
 int mainMenu(); // Function to display main menu and get user selection
 void callOperation(int operation); // Function to call the appropriate operation
 double collectFirstDouble(); // Function to collect first double input
 double collectSecondDouble(); // Function to collect second double input
-int testPrime(int n);  // Function to test if a number is prime
 void printHeader(char *operation); // Function to print operation header formatting
 void printOutput(double result); // Function to print output formatting
 
+// Function prototypes for operations
+double add(double a, double b); // Function to perform addition
+double subtract(double a, double b); // Function to perform subtraction
+double multiply(double a, double b); // Function to perform multiplication
+double divide(double a, double b); // Function to perform division
+int modulus(int a, int b); // Function to perform modulus operation
+int isPrime(int n); // Function to test if a number is prime
 
 int main()
 {
@@ -64,6 +73,8 @@ int main()
 
     return 0;
 }
+
+/* UI */
 
 // Function to display the main menu and get user selection
 int mainMenu()
@@ -110,21 +121,21 @@ void callOperation(int operation)
         printHeader("Addition");
         a = collectFirstDouble();
         b = collectSecondDouble();
-        printOutput(a + b);
+        printOutput(add(a,b));
         break;
     case 2:
         // Subtraction
         printHeader("Subtraction");
         a = collectFirstDouble();
         b = collectSecondDouble();
-        printOutput(a - b);
+        printOutput(subtract(a,b));
         break;
     case 3:
         // Multiplication
         printHeader("Multiplication");
         a = collectFirstDouble();
         b = collectSecondDouble();
-        printOutput(a * b);
+        printOutput(multiply(a,b));
         break;
     case 4:
         // Division
@@ -141,7 +152,7 @@ void callOperation(int operation)
         }
         else
         {
-            printOutput(a / b);
+            printOutput(divide(a,b));
         }
         break;
     case 5:
@@ -164,7 +175,7 @@ void callOperation(int operation)
         {
             printf("\n");
             printf("====================================\n\n");
-            printf("Result: %d\n\n", c % d);
+            printf("Result: %d\n\n", modulus(c,d));
             printf("====================================\n\n");
             printf("\n");
         }
@@ -173,7 +184,7 @@ void callOperation(int operation)
         printHeader("Prime Test (Whole Numbers Only)");
         printf("Enter an integer to test for primality: ");
         scanf("%d", &c);
-        if (testPrime(c))
+        if (isPrime(c)) // if the function returns 1, it is prime
         {
             printf("\n");
             printf("====================================\n");
@@ -222,23 +233,6 @@ double collectSecondDouble()
     return b;
 }
 
-// Function to test if a number is prime
-int testPrime(int n)
-{
-    if (n <= 1)
-        return 0; // numbers less than or equal to 1 are not prime
-    if (n == 2)
-        return 1; // 2 is prime
-    if (n % 2 == 0)
-        return 0; // even numbers > 2 are not prime
-    for (int i = 3; i * i <= n; i += 2)
-    { // only check odd numbers. Check up to sqrt(n)
-        if (n % i == 0)
-            return 0; // found a divisor, not prime
-    }
-    return 1; // no divisors found, is prime
-}
-
 // Function to print operation header formatting
 void printHeader(char *operation)
 {
@@ -259,4 +253,47 @@ void printOutput(double result)
     printf("\n");
 }
 
+/* OPERATIONS */
 
+// Function to perform addition
+double add(double a, double b)
+{
+    return a + b;
+}
+// Function to perform subtraction
+double subtract(double a, double b)
+{
+    return a - b;
+}
+// Function to perform multiplication
+double multiply(double a, double b)
+{
+    return a * b;
+}
+// Function to perform division
+double divide(double a, double b)
+{
+    return a / b;
+}
+// Function to perform modulus operation
+int modulus(int a, int b)
+{
+    return a % b;
+}
+
+// Function to test if a number is prime
+int isPrime(int n)
+{
+    if (n <= 1)
+        return 0; // numbers less than or equal to 1 are not prime
+    if (n == 2)
+        return 1; // 2 is prime
+    if (n % 2 == 0)
+        return 0; // even numbers > 2 are not prime
+    for (int i = 3; i * i <= n; i += 2)
+    { // only check odd numbers. Check up to sqrt(n)
+        if (n % i == 0)
+            return 0; // found a divisor, not prime
+    }
+    return 1; // no divisors found, is prime
+}
