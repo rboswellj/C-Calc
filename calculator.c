@@ -10,20 +10,17 @@ Only needs to be able to perform on 2 variables.
 TODO:
 Figure out how to confirm input in an integer for modulus and prime test functions
 Figure out how to confirm input in a double for other functions
-Add factorial function
-Add integer power of integer function
 Add sequence function using an array before displaying. Thinking fibonacci sequence or 
 */
+
 #include <stdio.h>
 #include <stdlib.h>
 
 // Function prototypes for UI
 int mainMenu(); // Function to display main menu and get user selection
 void callOperation(int operation); // Function to call the appropriate operation
-double collectFirstDouble(); // Function to collect first double input
-double collectSecondDouble(); // Function to collect second double input
-int collectFirstInt(); // Function to collect first integer input, for modulus, prime test, exponent, and factorial
-int collectSecondInt(); // Function to collect second integer input, for modulus, prime test, exponent, and factorial
+int getIntInput(const char *prompt); // Function to get integer input, or modulus, prime test, exponent, and factorial. Validates input.
+double getDoubleInput(const char *prompt);// Used to prompt for double input on all operations that allow for decimal input. Validates input.
 void printHeader(char *operation); // Function to print operation header formatting
 void printOutputDouble(double result); // Function to print output formatting
 void printOutputInt(int result); // Function to print output formatting for integer results
@@ -38,6 +35,7 @@ int modulus(int a, int b); // Function to perform modulus operation
 int isPrime(int n); // Function to test if a number is prime
 unsigned long long factorial(int n); // Function to compute factorial of a number, using unsigned long long to allow for larger results since cannot be negative
 long long exponent(int base, int exp); // Function to compute base raised to the exp power, remains signed to allow for negatives
+
 
 int main()
 {
@@ -102,9 +100,9 @@ int mainMenu()
         printf("\t(9) Operation\n\n");
         printf("\t(0) Exit\n\n");
         printf("Please select an operation: ");
-        scanf("%d", &selection);
+        selection = getIntInput("Select an operation: ");
         // if selection not in valid range print the error and then go back to the top
-        if (selection < 1 || selection > 9)
+        if (selection < 0 || selection > 9)
         {
             printf("\nInvalid selection. Please select a valid operation\n");
         }
@@ -127,29 +125,29 @@ void callOperation(int operation)
     case 1:
         // Addition
         printHeader("Addition");
-        a = collectFirstDouble();
-        b = collectSecondDouble();
+        a = getDoubleInput("Enter first number: ");
+        b = getDoubleInput("Enter second number: ");
         printOutputDouble(add(a,b));
         break;
     case 2:
         // Subtraction
         printHeader("Subtraction");
-        a = collectFirstDouble();
-        b = collectSecondDouble();
+        a = getDoubleInput("Enter first number: ");
+        b = getDoubleInput("Enter second number: ");
         printOutputDouble(subtract(a,b));
         break;
     case 3:
         // Multiplication
         printHeader("Multiplication");
-        a = collectFirstDouble();
-        b = collectSecondDouble();
+        a = getDoubleInput("Enter first number: ");
+        b = getDoubleInput("Enter second number: ");
         printOutputDouble(multiply(a,b));
         break;
     case 4:
         // Division
         printHeader("Division");
-        a = collectFirstDouble();
-        b = collectSecondDouble();
+        a = getDoubleInput("Enter first number: ");
+        b = getDoubleInput("Enter second number: ");
         if (b == 0)
         {
             divisionByZeroError();
@@ -162,8 +160,8 @@ void callOperation(int operation)
     case 5:
         // Modulus
         printHeader("Modulus (Whole Numbers Only)");
-        c = collectFirstInt();
-        d = collectSecondInt();
+        c = getIntInput("Enter first integer: ");
+        d = getIntInput("Enter second integer: ");
         if (d == 0)
         {
             divisionByZeroError();
@@ -176,8 +174,7 @@ void callOperation(int operation)
         break;
     case 6:
         printHeader("Prime Test (Whole Numbers Only)");
-        printf("Enter an integer to test for primality: ");
-        scanf("%d", &c);
+        c = getIntInput("Enter an integer to test for primality: ");
         if (isPrime(c)) // if the function returns 1, it is prime
         {
             printf("\n");
@@ -198,8 +195,7 @@ void callOperation(int operation)
     case 7:
         // Factorial
         printHeader("Factorial (Whole Numbers Only)");
-        printf("Enter an integer for factorial computation: ");
-        scanf("%d", &c);
+        c = getIntInput("Enter an integer for factorial computation: ");
         do {
             if(c < 0){
                 printf("Error: Factorial is not defined for negative numbers. Please enter a non-negative integer: ");
@@ -211,8 +207,8 @@ void callOperation(int operation)
     case 8:
         // Exponentiation
         printHeader("Exponentiation (Whole Numbers Only)");
-        c = collectFirstInt();
-        d = collectSecondInt();
+        c = getIntInput("Enter the base integer: ");
+        d = getIntInput("Enter the exponent (non-negative integer): ");
         do{
             if(d < 0){
                 printf("Error: Exponentiation function only accepts non-negative integers for the exponent. Please enter a non-negative integer: ");
@@ -237,39 +233,72 @@ void callOperation(int operation)
     }
 }
 
-// Used to prompt for first double input on all operations except modulus and prime test
-double collectFirstDouble()
+// Used to prompt for integer input on modulus, prime test, exponent, and factorial operations. Validates input.
+int getIntInput(const char *prompt)
 {
-    double a;
-    printf("Enter first number: ");
-    scanf("%lf", &a);
-    return a;
-}
+    char buffer[100];
+    char *endptr;
+    long value;
 
-// Used to prompt for second double input on all operations except modulus and prime test
-double collectSecondDouble()
-{
-    double b;
-    printf("Enter second number: ");
-    scanf("%lf", &b);
-    return b;
-}
+    while (1)
+    {
+        printf("%s", prompt);
 
-// Used to prompt for first integer input on modulus, prime test, exponent, and factorial operations
-int collectFirstInt()
-{
-    int c;
-    printf("Enter first integer: ");
-    scanf("%d", &c);
-    return c;
+        if (!fgets(buffer, sizeof(buffer), stdin))
+            continue;
+
+        value = strtol(buffer, &endptr, 10);
+
+        /* 
+           Invalid if:
+           - no digits were read
+           - leftover characters (like .5 or abc)
+        */
+        if (endptr == buffer || *endptr != '\n')
+        {
+            printf("Invalid input. Please enter an integer.\n");
+            continue;
+        }
+
+        return (int)value;
+    }
 }
-// Used to prompt for second integer input on modulus, prime test, exponent, and factorial operations
-int collectSecondInt()
+// Used to prompt for double input on all operations that allow for decimal input. Validates input.
+double getDoubleInput(const char *prompt)
 {
-    int d;
-    printf("Enter second integer: ");
-    scanf("%d", &d);
-    return d;
+    char buffer[100];
+    char *endptr;
+    double value;
+
+    while (1)
+    {
+        printf("%s", prompt);
+
+        if (!fgets(buffer, sizeof(buffer), stdin))
+        {
+            printf("Input error.\n");
+            continue;
+        }
+
+        // Ignore empty input (just Enter)
+        if (buffer[0] == '\n')
+            continue;
+
+        value = strtod(buffer, &endptr);
+
+        /*
+          Invalid if:
+          - no number was read
+          - extra characters remain (like abc)
+        */
+        if (endptr == buffer || *endptr != '\n')
+        {
+            printf("Invalid input. Please enter a number.\n");
+            continue;
+        }
+
+        return value;
+    }
 }
 
 // Function to print operation header formatting
