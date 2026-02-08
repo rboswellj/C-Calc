@@ -7,10 +7,6 @@ A Calculator program that can perform addition, subtraction, multiplication and 
 as well as modulus and prime tests.
 Only needs to be able to perform on 2 variables.
 
-TODO:
-Figure out how to confirm input in an integer for modulus and prime test functions
-Figure out how to confirm input in a double for other functions
-Add sequence function using an array before displaying. Thinking fibonacci sequence or 
 */
 
 #include <stdio.h>
@@ -35,7 +31,7 @@ int modulus(int a, int b); // Function to perform modulus operation
 int isPrime(int n); // Function to test if a number is prime
 unsigned long long factorial(int n); // Function to compute factorial of a number, using unsigned long long to allow for larger results since cannot be negative
 long long exponent(int base, int exp); // Function to compute base raised to the exp power, remains signed to allow for negatives
-
+void pascalsTriangle(int rows); // Function to print Pascal's triangle up to a given number of rows
 
 int main()
 {
@@ -93,11 +89,13 @@ int mainMenu()
         printf("\t(2) Subtraction\n");
         printf("\t(3) Multiplication\n");
         printf("\t(4) Division\n");
+        printf("====================================\n");
         printf("\t(5) Modulus\n");
         printf("\t(6) Test if Prime\n");
         printf("\t(7) Factorial\n");
         printf("\t(8) Exponentiation\n");
-        printf("\t(9) Operation\n\n");
+        printf("\t(9) Pascal's Triangle\n");
+        printf("====================================\n");
         printf("\t(0) Exit\n\n");
         printf("Please select an operation: ");
         selection = getIntInput("Select an operation: ");
@@ -218,9 +216,14 @@ void callOperation(int operation)
         printOutputInt(exponent(c,d));
         break;
     case 9:
-        // Operation
-        printHeader("Operation");
-        printf("This operation is not yet implemented.\n");
+        // Pascal's Triangle
+        c = getIntInput("Enter the number of rows of Pascal's triangle to display(between 2 and 12): ");
+        do{
+            if(c < 2 || c > 12){
+                c = getIntInput("Error: Please enter an integer between 2 and 12: ");
+            }
+        } while (c < 2 || c > 12);
+        pascalsTriangle(c);
         break;
     case 0:
         // Exit
@@ -411,3 +414,44 @@ long long exponent(int base, int exp){
     return result;
 }
 
+void pascalsTriangle(int rows)
+{
+    int triangle[20][20];   // 2D array to store values
+    int i, j, s;
+
+    // Build the triangle and STORE values in the array
+    for (i = 0; i < rows; i++)
+    {
+        for (j = 0; j <= i; j++)
+        {
+            if (j == 0 || j == i)
+            {
+                triangle[i][j] = 1; // First and last value in each row is 1
+            }
+            else
+            {
+                // Each value is the sum of the two values directly above it in the previous row
+                triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j]; 
+            }
+        }
+    }
+
+    // Print the triangle with spacing
+    printf("\nPascal's Triangle:\n");
+    for (i = 0; i < rows; i++)
+    {
+        // Print leading spaces to center the row
+        for (s = 0; s < rows - i - 1; s++)
+        {
+            printf("  ");
+        }
+
+        // Print row values
+        for (j = 0; j <= i; j++)
+        {
+            printf("%4d", triangle[i][j]);
+        }
+
+        printf("\n");
+    }
+}
